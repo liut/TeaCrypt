@@ -1,0 +1,102 @@
+/*
+Copyright (c) 2012, Logan J. Drews
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
+
+package tea
+
+import (
+	"bytes"
+	"testing"
+)
+
+type encryptionTests struct {
+	plain  []byte
+	key    []byte
+	cipher []byte
+}
+
+var testVectors = []encryptionTests{
+	{
+		[]byte{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+		[]byte{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+		[]byte{0x41, 0xEA, 0x3A, 0x0A, 0x94, 0xBA, 0xA9, 0x40},
+	},
+	{
+		[]byte{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08},
+		[]byte{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+		[]byte{0x6A, 0x2F, 0x9C, 0xF3, 0xFC, 0xCF, 0x3C, 0x55},
+	},
+	{
+		[]byte{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08},
+		[]byte{0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF},
+		[]byte{0xDE, 0xB1, 0xC0, 0xA2, 0x7E, 0x74, 0x5D, 0xB3},
+	},
+	{
+		[]byte{0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF},
+		[]byte{0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF},
+		[]byte{0x12, 0x6C, 0x6B, 0x92, 0xC0, 0x65, 0x3A, 0x3E},
+	},
+}
+
+func TestShortKey(t *testing.T) {
+	_, err := NewTea([]byte{0xAA})
+
+	if err == nil {
+		t.Errorf("Short Key did not generate error.")
+	}
+
+}
+
+func TestLongKey(t *testing.T) {
+	_, err := NewTea([]byte{0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00})
+
+	if err == nil {
+		t.Errorf("Long key did not generate error.")
+	}
+}
+
+func TestEncryption(t *testing.T) {
+	for _, v := range testVectors {
+		out := make([]byte, 8)
+		c, err := NewTea(v.key)
+
+		if err != nil {
+			t.Errorf("NewTea(%d bytes) = %s", len(v.key), err)
+		}
+
+		c.Encrypt(out, v.plain)
+
+		if bytes.Compare(out, v.cipher) != 0 {
+			t.Errorf("Encryption failed; Expected %v, got %v", v.cipher, out)
+		}
+	}
+}
+
+func TestDecryption(t *testing.T) {
+	for _, v := range testVectors {
+		out := make([]byte, 8)
+		c, err := NewTea(v.key)
+
+		if err != nil {
+			t.Errorf("NewTea(%d bytes) = %s", len(v.key), err)
+		}
+
+		c.Decrypt(out, v.cipher)
+
+		if bytes.Compare(out, v.plain) != 0 {
+			t.Errorf("Decryption failed; Expected %v, got %v", v.plain, out)
+		}
+	}
+}
