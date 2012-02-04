@@ -27,7 +27,7 @@ var end binary.ByteOrder = binary.BigEndian
 //var end binary.ByteOrder = binary.LittleEndian
 
 type xxteaCipher struct {
-	key []byte
+	key  []byte
 	keys []uint32
 	size uint32
 }
@@ -49,7 +49,7 @@ func NewXXTea(key []byte, size uint32) (*xxteaCipher, os.Error) {
 	cipher.size = size
 
 	for i := 0; i < 4; i++ {
-		cipher.keys[i] = end.Uint32(key[i * 4:])
+		cipher.keys[i] = end.Uint32(key[i*4:])
 	}
 
 	return cipher, nil
@@ -61,13 +61,13 @@ func (c *xxteaCipher) BlockSize() int {
 
 func (c *xxteaCipher) Encrypt(dst, src []byte) {
 	var (
-		n              uint32 = c.size / 4
-		words        []uint32 = make([]uint32, n)
-		v0, v1         uint32
-		sum            uint32 = 0
-		delta          uint32 = 0x9E3779B9
-		q              uint32 = 6 + 52 / n
-		i, e, p        uint32
+		n       uint32   = c.size / 4
+		words   []uint32 = make([]uint32, n)
+		v0, v1  uint32
+		sum     uint32 = 0
+		delta   uint32 = 0x9E3779B9
+		q       uint32 = 6 + 52/n
+		i, e, p uint32
 	)
 
 	for i = 0; i < n; i++ {
@@ -81,16 +81,16 @@ func (c *xxteaCipher) Encrypt(dst, src []byte) {
 	fmt.Printf("\n")*/
 
 	for i = 0; i < q; i++ {
-		sum += delta;
-		e = (sum >> 2) & 3;
-		for p = 0; p < n - 1; p++ {
-			v0 = words[p + 1]
+		sum += delta
+		e = (sum >> 2) & 3
+		for p = 0; p < n-1; p++ {
+			v0 = words[p+1]
 			words[p] += c.mx(v0, v1, sum, p, e)
 			v1 = words[p]
 		}
 		v0 = words[0]
-		words[n - 1] += c.mx(v0, v1, sum, p, e)
-		v1 = words[n - 1]
+		words[n-1] += c.mx(v0, v1, sum, p, e)
+		v1 = words[n-1]
 	}
 
 	for i = 0; i < n; i++ {
@@ -100,13 +100,13 @@ func (c *xxteaCipher) Encrypt(dst, src []byte) {
 
 func (c *xxteaCipher) Decrypt(dst, src []byte) {
 	var (
-		n              uint32 = c.size / 4
-		words        []uint32 = make([]uint32, n)
-		v0, v1         uint32
-		q              uint32 = 6 + 52 / n
-		delta          uint32 = 0x9E3779B9
-		sum            uint32 = q * delta
-		i, e, p        uint32
+		n       uint32   = c.size / 4
+		words   []uint32 = make([]uint32, n)
+		v0, v1  uint32
+		q       uint32 = 6 + 52/n
+		delta   uint32 = 0x9E3779B9
+		sum     uint32 = q * delta
+		i, e, p uint32
 	)
 
 	for i = 0; i < n; i++ {
@@ -117,11 +117,11 @@ func (c *xxteaCipher) Decrypt(dst, src []byte) {
 	for i = 0; i < q; i++ {
 		e = (sum >> 2) & 3
 		for p = n - 1; p > 0; p-- {
-			v1 = words[p - 1]
+			v1 = words[p-1]
 			words[p] -= c.mx(v0, v1, sum, p, e)
 			v0 = words[p]
 		}
-		v1 = words[n - 1]
+		v1 = words[n-1]
 		words[0] -= c.mx(v0, v1, sum, p, e)
 		v0 = words[0]
 		sum -= delta
@@ -133,6 +133,6 @@ func (c *xxteaCipher) Decrypt(dst, src []byte) {
 }
 
 func (c *xxteaCipher) mx(v0, v1, sum, p, e uint32) uint32 {
-	var r uint32 = ((((v1 >> 5) ^ (v0 << 2)) + ((v0 >> 3) ^ (v1 << 4))) ^ ((sum ^ v0) + (c.keys[(p & 3) ^ e] ^ v1)))
+	var r uint32 = ((((v1 >> 5) ^ (v0 << 2)) + ((v0 >> 3) ^ (v1 << 4))) ^ ((sum ^ v0) + (c.keys[(p&3)^e] ^ v1)))
 	return r
 }

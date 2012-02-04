@@ -25,7 +25,7 @@ import (
 var end binary.ByteOrder = binary.BigEndian
 
 type xteaCipher struct {
-	key []byte
+	key  []byte
 	keys []uint32
 }
 
@@ -45,7 +45,7 @@ func NewXTea(key []byte) (*xteaCipher, os.Error) {
 	cipher.keys = make([]uint32, 4)
 
 	for i := 0; i < 4; i++ {
-		cipher.keys[i] = end.Uint32(key[i * 4:])
+		cipher.keys[i] = end.Uint32(key[i*4:])
 	}
 
 	return cipher, nil
@@ -57,15 +57,15 @@ func (c *xteaCipher) BlockSize() int {
 
 func (c *xteaCipher) Encrypt(dst, src []byte) {
 	var (
-		v0, v1         uint32 = end.Uint32(src), end.Uint32(src[4:])
-		sum            uint32 = 0
-		delta          uint32 = 0x9E3779B9
+		v0, v1 uint32 = end.Uint32(src), end.Uint32(src[4:])
+		sum    uint32 = 0
+		delta  uint32 = 0x9E3779B9
 	)
 
 	for i := 0; i < 32; i++ {
-		v0 += (((v1 << 4) ^ (v1 >> 5)) + v1) ^ (sum + c.keys[sum & 3])
+		v0 += (((v1 << 4) ^ (v1 >> 5)) + v1) ^ (sum + c.keys[sum&3])
 		sum += delta
-		v1 += (((v0 << 4) ^ (v0 >> 5)) + v0) ^ (sum + c.keys[(sum >> 11) & 3])
+		v1 += (((v0 << 4) ^ (v0 >> 5)) + v0) ^ (sum + c.keys[(sum>>11)&3])
 	}
 
 	end.PutUint32(dst, v0)
@@ -74,15 +74,15 @@ func (c *xteaCipher) Encrypt(dst, src []byte) {
 
 func (c *xteaCipher) Decrypt(dst, src []byte) {
 	var (
-		v0, v1         uint32 = end.Uint32(src[0:4]), end.Uint32(src[4:8])
-		delta          uint32 = 0x9E3779B9
-		sum            uint32 = delta << 5
+		v0, v1 uint32 = end.Uint32(src[0:4]), end.Uint32(src[4:8])
+		delta  uint32 = 0x9E3779B9
+		sum    uint32 = delta << 5
 	)
 
 	for i := 0; i < 32; i++ {
-		v1 -= ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + c.keys[(sum >> 11) & 3])
+		v1 -= ((v0<<4 ^ v0>>5) + v0) ^ (sum + c.keys[(sum>>11)&3])
 		sum -= delta
-		v0 -= ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + c.keys[sum & 3])
+		v0 -= ((v1<<4 ^ v1>>5) + v1) ^ (sum + c.keys[sum&3])
 	}
 
 	end.PutUint32(dst, v0)
