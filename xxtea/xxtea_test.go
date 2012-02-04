@@ -97,7 +97,7 @@ var test128Vectors = []encryptionTests{
 }
 
 func TestShortKey(t *testing.T) {
-	_, err := NewXXTea([]byte{0xAA}, 8)
+	_, err := NewCipher([]byte{0xAA}, 8)
 
 	if err == nil {
 		t.Errorf("Short Key did not generate error.")
@@ -106,7 +106,7 @@ func TestShortKey(t *testing.T) {
 }
 
 func TestLongKey(t *testing.T) {
-	_, err := NewXXTea([]byte{0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00}, 8)
+	_, err := NewCipher([]byte{0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00}, 8)
 
 	if err == nil {
 		t.Errorf("Long key did not generate error.")
@@ -116,7 +116,7 @@ func TestLongKey(t *testing.T) {
 func Test64Encryption(t *testing.T) {
 	for _, v := range test64Vectors {
 		out := make([]byte, 8)
-		c, err := NewXXTea(v.key, 8)
+		c, err := NewCipher(v.key, 8)
 
 		if err != nil {
 			t.Errorf("NewTea(%d bytes) = %s", len(v.key), err)
@@ -133,7 +133,7 @@ func Test64Encryption(t *testing.T) {
 func Test64Decryption(t *testing.T) {
 	for _, v := range test64Vectors {
 		out := make([]byte, 8)
-		c, err := NewXXTea(v.key, 8)
+		c, err := NewCipher(v.key, 8)
 
 		if err != nil {
 			t.Errorf("NewTea(%d bytes) = %s", len(v.key), err)
@@ -150,7 +150,7 @@ func Test64Decryption(t *testing.T) {
 func Test96Encryption(t *testing.T) {
 	for _, v := range test96Vectors {
 		out := make([]byte, 12)
-		c, err := NewXXTea(v.key, 12)
+		c, err := NewCipher(v.key, 12)
 
 		if err != nil {
 			t.Errorf("NewTea(%d bytes) = %s", len(v.key), err)
@@ -167,7 +167,7 @@ func Test96Encryption(t *testing.T) {
 func Test96Decryption(t *testing.T) {
 	for _, v := range test96Vectors {
 		out := make([]byte, 12)
-		c, err := NewXXTea(v.key, 12)
+		c, err := NewCipher(v.key, 12)
 
 		if err != nil {
 			t.Errorf("NewTea(%d bytes) = %s", len(v.key), err)
@@ -184,7 +184,7 @@ func Test96Decryption(t *testing.T) {
 func Test128Encryption(t *testing.T) {
 	for _, v := range test128Vectors {
 		out := make([]byte, 16)
-		c, err := NewXXTea(v.key, 16)
+		c, err := NewCipher(v.key, 16)
 
 		if err != nil {
 			t.Errorf("NewTea(%d bytes) = %s", len(v.key), err)
@@ -201,7 +201,7 @@ func Test128Encryption(t *testing.T) {
 func Test128Decryption(t *testing.T) {
 	for _, v := range test128Vectors {
 		out := make([]byte, 16)
-		c, err := NewXXTea(v.key, 16)
+		c, err := NewCipher(v.key, 16)
 
 		if err != nil {
 			t.Errorf("NewTea(%d bytes) = %s", len(v.key), err)

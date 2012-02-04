@@ -51,7 +51,7 @@ var testVectors = []encryptionTests{
 }
 
 func TestShortKey(t *testing.T) {
-	_, err := NewTea([]byte{0xAA})
+	_, err := NewCipher([]byte{0xAA})
 
 	if err == nil {
 		t.Errorf("Short Key did not generate error.")
@@ -60,7 +60,7 @@ func TestShortKey(t *testing.T) {
 }
 
 func TestLongKey(t *testing.T) {
-	_, err := NewTea([]byte{0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00})
+	_, err := NewCipher([]byte{0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00})
 
 	if err == nil {
 		t.Errorf("Long key did not generate error.")
@@ -70,7 +70,7 @@ func TestLongKey(t *testing.T) {
 func TestEncryption(t *testing.T) {
 	for _, v := range testVectors {
 		out := make([]byte, 8)
-		c, err := NewTea(v.key)
+		c, err := NewCipher(v.key)
 
 		if err != nil {
 			t.Errorf("NewTea(%d bytes) = %s", len(v.key), err)
@@ -87,7 +87,7 @@ func TestEncryption(t *testing.T) {
 func TestDecryption(t *testing.T) {
 	for _, v := range testVectors {
 		out := make([]byte, 8)
-		c, err := NewTea(v.key)
+		c, err := NewCipher(v.key)
 
 		if err != nil {
 			t.Errorf("NewTea(%d bytes) = %s", len(v.key), err)

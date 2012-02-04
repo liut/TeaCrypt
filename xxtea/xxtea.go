@@ -38,7 +38,7 @@ func (k KeySizeError) String() string {
 	return "xxtea: invalid key size " + strconv.Itoa(int(k))
 }
 
-func NewXXTea(key []byte, size uint32) (*xxteaCipher, os.Error) {
+func NewCipher(key []byte, size uint32) (*xxteaCipher, os.Error) {
 	if len(key) != 16 {
 		return nil, KeySizeError(len(key))
 	}
