@@ -5,19 +5,19 @@ This is a library that implements the several of the TEA family of encryption al
 TEA is implemented in the teacrypt/tea package.
 
 Ciphers are initialized such:
-`cipher := tea.NewTea(key)`
+`cipher := tea.NewCipher(key)`
 
 ## XTEA
 XTEA is implemented in the teacrypt/xtea package.
 
 Ciphers are initialized such:
-`cipher := xtea.newXTea(key)`
+`cipher := xtea.NewCipher(key)`
 
 ## XXTEA
 XXTEA is implemented in the teacrypt/xxtea package. Unlike TEA and XTEA, which are fixed block width ciphers, XXTEA can operate on block sizes of variables length (minimum 64-bits). In addition to taking a key, initializing an XXTEA cipher takes a block size.
 
 Ciphers are initialized such:
-`cipher := xtea.newXXTea(key, size)`
+`cipher := xxtea.NewCipher(key, size)`
 
 # Install
 To test, run `gomake test` in the root directory.
