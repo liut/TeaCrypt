@@ -20,11 +20,9 @@ import (
 	"encoding/binary"
 	"strconv"
 	"os"
-	//"fmt"
 )
 
 var end binary.ByteOrder = binary.BigEndian
-//var end binary.ByteOrder = binary.LittleEndian
 
 type xxteaCipher struct {
 	key  []byte
@@ -74,11 +72,6 @@ func (c *xxteaCipher) Encrypt(dst, src []byte) {
 		words[i] = end.Uint32(src[i*4:])
 	}
 	v0, v1 = words[0], words[n-1]
-
-	/*for i = 0; i < n; i++ {
-		fmt.Printf("%08X", words[i])
-	}
-	fmt.Printf("\n")*/
 
 	for i = 0; i < q; i++ {
 		sum += delta
@@ -133,6 +126,5 @@ func (c *xxteaCipher) Decrypt(dst, src []byte) {
 }
 
 func (c *xxteaCipher) mx(v0, v1, sum, p, e uint32) uint32 {
-	var r uint32 = ((((v1 >> 5) ^ (v0 << 2)) + ((v0 >> 3) ^ (v1 << 4))) ^ ((sum ^ v0) + (c.keys[(p&3)^e] ^ v1)))
-	return r
+	return ((((v1 >> 5) ^ (v0 << 2)) + ((v0 >> 3) ^ (v1 << 4))) ^ ((sum ^ v0) + (c.keys[(p&3)^e] ^ v1)))
 }
