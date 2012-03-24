@@ -125,6 +125,16 @@ func (c *xxteaCipher) Decrypt(dst, src []byte) {
 	}
 }
 
+func (c *xxteaCipher) Clear() {
+	for i := 0; i < len(c.key); i++ {
+		c.key[i] = 0
+	}
+
+	for i := 0; i < len(c.keys); i++ {
+		c.keys[i] = 0
+	}
+}
+
 func (c *xxteaCipher) mx(v0, v1, sum, p, e uint32) uint32 {
 	return ((((v1 >> 5) ^ (v0 << 2)) + ((v0 >> 3) ^ (v1 << 4))) ^ ((sum ^ v0) + (c.keys[(p&3)^e] ^ v1)))
 }

@@ -90,3 +90,9 @@ func (c *teaCipher) Decrypt(dst, src []byte) {
 	end.PutUint32(dst, v0)
 	end.PutUint32(dst[4:], v1)
 }
+
+func (c *teaCipher) Clear() {
+	for i := 0; i < len(c.key); i++ {
+		c.key[i] = 0
+	}
+}

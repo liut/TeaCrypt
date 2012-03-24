@@ -72,6 +72,16 @@ func (c *xteaCipher) Encrypt(dst, src []byte) {
 	end.PutUint32(dst[4:], v1)
 }
 
+func (c *xteaCipher) Clear() {
+	for i := 0; i < len(c.key); i++ {
+		c.key[i] = 0
+	}
+
+	for i := 0; i < len(c.keys); i++ {
+		c.key[i] = 0
+	}
+}
+
 func (c *xteaCipher) Decrypt(dst, src []byte) {
 	var (
 		v0, v1 uint32 = end.Uint32(src[0:4]), end.Uint32(src[4:8])
