@@ -20,9 +20,13 @@ Ciphers are initialized such:
 `cipher := xxtea.NewCipher(key, size)`
 
 # Install
-To test, run `gomake test` in the root directory.
+## prepare
+* `mkdir ~/gocode/src && cd ~/gocode/src`
+* `git clone https://github.com/liut/TeaCrypt`
 
-To install, run `gomake install` in the root directory.
+To test, run `GOPATH=~/gocode go test TeaCrypt/xxtea` in the root directory.
+
+To install, run `GOPATH=~/gocode go install TeaCrypt/xxtea` in the root directory.
 
 # Compatibility
 Due to the lack of official test vectors for these algorithms, I cannot guarantee these algorithms are fully compatible with all other imlementations.
