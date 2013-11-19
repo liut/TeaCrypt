@@ -19,7 +19,6 @@ package xxtea
 import (
 	"encoding/binary"
 	"strconv"
-	"os"
 )
 
 var end binary.ByteOrder = binary.BigEndian
@@ -32,11 +31,11 @@ type xxteaCipher struct {
 
 type KeySizeError int
 
-func (k KeySizeError) String() string {
+func (k KeySizeError) Error() string {
 	return "xxtea: invalid key size " + strconv.Itoa(int(k))
 }
 
-func NewCipher(key []byte, size uint32) (*xxteaCipher, os.Error) {
+func NewCipher(key []byte, size uint32) (*xxteaCipher, error) {
 	if len(key) != 16 {
 		return nil, KeySizeError(len(key))
 	}
